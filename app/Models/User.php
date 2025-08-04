@@ -3,7 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -14,13 +16,15 @@ class User extends Authenticatable
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var list<string>
      */
     protected $fillable = [
         'name',
+        'nickname',
+        'phone_number',
+        'role',
         'email',
         'password',
+        'avatar',
     ];
 
     /**
@@ -44,5 +48,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * give access to admin panel (me for now)
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->email === 'brad.m.goldsmith@gmail.com';
+    }
+
+    /**
+     * gets a full name for filament
+     */
+    public function getFilamentName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the Team of the User
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 }

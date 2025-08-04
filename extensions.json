@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "open-southeners.laravel-pint",
+        "esbenp.prettier-vscode",
+        "shufo.vscode-blade-formatter",
+        "Vue.volar"
+    ]
+}
