@@ -10,6 +10,11 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -23,7 +28,11 @@ class TeamResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')->required(),
+                FileUpload::make('logo')->directory('team-logos'),
+                Select::make('user_id')->label('Captain')->relationship('captain', 'name'),
+                Select::make('league_id')->label('League')->relationship('league', 'name'),
+                Select::make('users')->label('Players')->multiple()->relationship('users', 'name')->disabled(),
             ]);
     }
 
@@ -31,7 +40,9 @@ class TeamResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name'),
+                ImageColumn::make('logo'),
+                TextColumn::make('captain.name')->label('Captain'),
             ])
             ->filters([
                 //

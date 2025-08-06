@@ -22,8 +22,8 @@ class Scorecard extends Model
             ['team_one' => $team_one, 'team_two' => $team_two] = $scorecard->getLeagueTeams();
             $scorecard->hole_data = collect(range(1, 18))->mapWithKeys(fn ($i) => [
                 "hole_{$i}_data" => [
-                    $team_one->name => null,
-                    $team_two->name => null,
+                    $team_one->slug => null,
+                    $team_two->slug => null,
                     'winner' => null,
                 ],
             ]);
@@ -97,8 +97,8 @@ class Scorecard extends Model
             return [
                 'hole_number' => $i,
                 'label' => "Hole $i",
-                'ramrod_score' => $hole[$team_one->name] ?? null,
-                'roostah_score' => $hole[$team_two->name] ?? null,
+                $team_one->slug => $hole[$team_one->name] ?? null,
+                $team_two->slug => $hole[$team_two->name] ?? null,
                 'winner' => $hole['winner'] ?? null,
             ];
         })->toArray();
@@ -116,8 +116,8 @@ class Scorecard extends Model
             $key = "hole_{$hole['hole_number']}_data";
 
             $formatted[$key] = [
-                $team_one->name => $hole[$team_one->name] ?? null,
-                $team_two->name => $hole[$team_two->name] ?? null,
+                $team_one->slug => $hole[$team_one->name] ?? null,
+                $team_two->slug => $hole[$team_two->name] ?? null,
                 'winner' => $hole['winner'] ?? null,
             ];
         }

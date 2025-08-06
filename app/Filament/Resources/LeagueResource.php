@@ -4,9 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\LeagueResource\Pages;
 use App\Models\League;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class LeagueResource extends Resource
@@ -19,7 +22,8 @@ class LeagueResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')->required(),
+                TextArea::make('description')->autosize()->required(),
             ]);
     }
 
@@ -27,7 +31,8 @@ class LeagueResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name'),
+                TextColumn::make('description')->wrap(),
             ])
             ->filters([
                 //

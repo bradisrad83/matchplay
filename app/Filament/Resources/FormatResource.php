@@ -3,15 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\FormatResource\Pages;
-use App\Filament\Resources\FormatResource\RelationManagers;
 use App\Models\Format;
-use Filament\Forms;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FormatResource extends Resource
 {
@@ -23,7 +22,8 @@ class FormatResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')->required(),
+                TextArea::make('description')->autosize()->required(),
             ]);
     }
 
@@ -31,7 +31,8 @@ class FormatResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name'),
+                TextColumn::make('description')->wrap(),
             ])
             ->filters([
                 //
