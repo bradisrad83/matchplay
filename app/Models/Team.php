@@ -24,8 +24,8 @@ class Team extends Model
         'user_id',
     ];
 
-    protected $appends = [
-        'slug'
+    protected $with = [
+        'slug',
     ];
 
     /**
