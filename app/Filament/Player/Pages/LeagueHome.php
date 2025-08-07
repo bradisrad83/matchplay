@@ -12,10 +12,8 @@ class LeagueHome extends Page
 
     public function getViewData(): array
     {
-        $user = auth()->user();
-        $teams = $user->league->teams;
         return [
-            'teams' => $teams,
+            'leagueData' => auth()->user()->getLeagueData(),
         ];
     }    
 }

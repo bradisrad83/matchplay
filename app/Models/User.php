@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\GetsLeagueTeams;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
@@ -37,6 +38,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $appends = [
+        'combined_name',
     ];
 
     /**
@@ -86,5 +91,21 @@ class User extends Authenticatable
             'team_id',       // Foreign key on users (users.team_id)
             'league_id'      // Foreign key on teams (teams.league_id)
         );
+    }
+
+    /**
+     * Get the team's slug (auto-generated from name).
+     */
+    protected function combinedName(): Attribute
+    {
+        return Attribute::get(function () {
+            $nameParts = explode(' ', $this->name);
+            $nickname = '"'.$this->nickname.'"';
+
+            $first = array_shift($nameParts);
+            $rest = implode(' ', $nameParts);
+
+            return trim("{$first} {$nickname} {$rest}");
+        });
     }
 }
