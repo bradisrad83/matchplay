@@ -16,9 +16,11 @@ class Profile extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    protected static ?string $slug = 'profile'; // ← explicit
+
     protected static string $view = 'filament.player.pages.profile';
 
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     public User $user;
 

@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Player\Pages\LeagueHome;
+use App\Filament\Player\Pages\PlayerDashboard;
 use App\Filament\Player\Pages\Profile;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -25,7 +27,7 @@ class PlayerPanelProvider extends PanelProvider
     {
         return $panel
             ->id('player')
-            ->path('/')
+            ->path('/league') // not sure what I am going to call this yet
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -33,9 +35,9 @@ class PlayerPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Player/Resources'), for: 'App\\Filament\\Player\\Resources')
             ->discoverPages(in: app_path('Filament/Player/Pages'), for: 'App\\Filament\\Player\\Pages')
             ->pages([
-                \App\Filament\Player\Pages\LeagueHome::class,
-                \App\Filament\Player\Pages\Profile::class,
-                \App\Filament\Player\Pages\PlayerDashboard::class,
+                LeagueHome::class,
+                Profile::class,
+                PlayerDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Player/Widgets'), for: 'App\\Filament\\Player\\Widgets')
             ->widgets([
