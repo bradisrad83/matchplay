@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('role')->default('player');
             $table->boolean('active')->default(true);
             $table->string('avatar')->nullable();
+            $table->decimal('handicap', 4, 1)->nullable();
+            $table->boolean('allow_sms')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

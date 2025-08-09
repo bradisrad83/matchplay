@@ -26,11 +26,13 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // 1) drop the FKs
         Schema::table('scorecard_user', function (Blueprint $table) {
-            $table->dropForeign(['scorecard_id', 'user_id']);
-            $table->dropColumn('scorecard_id');
-            $table->dropColumn('user_id');
+            $table->dropForeign(['scorecard_id']);
+            $table->dropForeign(['user_id']);
         });
-        Schema::dropIfExists('scorecard_user_pivot');
+
+        // 2) then drop the table itself
+        Schema::dropIfExists('scorecard_user');
     }
 };

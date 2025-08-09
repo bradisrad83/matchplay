@@ -2,10 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Player\Pages\Profile;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -32,6 +34,8 @@ class PlayerPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Player/Pages'), for: 'App\\Filament\\Player\\Pages')
             ->pages([
                 \App\Filament\Player\Pages\LeagueHome::class,
+                \App\Filament\Player\Pages\Profile::class,
+                \App\Filament\Player\Pages\PlayerDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Player/Widgets'), for: 'App\\Filament\\Player\\Widgets')
             ->widgets([
@@ -51,6 +55,13 @@ class PlayerPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Profile')
+                    ->icon('heroicon-o-user')
+                    ->url(fn () => Profile::getUrl(panel: 'player')) // or: route('filament.player.pages.profile')
+                    ->sort(10),
             ]);
     }
 }

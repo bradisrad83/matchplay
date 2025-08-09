@@ -40,6 +40,7 @@ class UserResource extends Resource
                 ]),
                 Select::make('team_id')->label('Team')->relationship('team', 'name'),
                 Checkbox::make('active'),
+                Checkbox::make('allow_sms'),
                 FileUpload::make('avatar')->directory('avatars'),
             ]);
     }
@@ -56,6 +57,7 @@ class UserResource extends Resource
                 TextColumn::make('phone_number')->icon('heroicon-m-phone')->iconColor('primary'),
                 TextColumn::make('role'),
                 CheckboxColumn::make('active'),
+                CheckboxColumn::make('allow_sms'),
                 SelectColumn::make('role')->options([
                     'player' => 'Player',
                     'captain' => 'Captain',

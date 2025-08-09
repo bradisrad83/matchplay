@@ -28,6 +28,8 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar',
+        'handicap',
+        'allow_sms',
     ];
 
     /**
