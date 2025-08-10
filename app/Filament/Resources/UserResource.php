@@ -41,7 +41,10 @@ class UserResource extends Resource
                 Select::make('team_id')->label('Team')->relationship('team', 'name'),
                 Checkbox::make('active'),
                 Checkbox::make('allow_sms'),
-                FileUpload::make('avatar')->directory('avatars'),
+                FileUpload::make('avatar')
+                    ->image()
+                    ->directory('avatars')
+                    ->multiple(false),
             ]);
     }
 

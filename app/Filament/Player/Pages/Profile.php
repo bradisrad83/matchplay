@@ -59,13 +59,11 @@ class Profile extends Page implements HasForms
                     ->label('Email Address')
                     ->email()
                     ->required()
-                    // ignore the current user's email on unique rule
                     ->unique(ignoreRecord: true),
                 TextInput::make('phone_number')->label('Phone Number')->tel(),
                 TextInput::make('handicap')->label('Handicap')->numeric(),
                 Toggle::make('allow_sms')->label('Allow Text Messages'),
             ])
-            // bind the form to your state array
             ->statePath('data');
     }
 
