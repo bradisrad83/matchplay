@@ -20,11 +20,14 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\Facades\Auth;
 
 class PlayerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        logger('in the panel');
+        logger("user: ", [auth()->user()]);
         return $panel
             ->id('player')
             ->path('/league') // not sure what I am going to call this yet
@@ -63,7 +66,13 @@ class PlayerPanelProvider extends PanelProvider
                     ->label('Profile')
                     ->icon('heroicon-o-user')
                     ->url(fn () => Profile::getUrl(panel: 'player')) // or: route('filament.player.pages.profile')
-                    ->sort(10),
+                    ->sort(1),
+                MenuItem::make()
+                    ->label('Admin')
+                    ->icon('heroicon-o-cog')
+                    ->visible(fn(): bool => Auth::user()->role === 'superadmin')
+                    ->url(fn () => route('filament.admin.pages.dashboard'))
+                    ->sort(0),
             ]);
     }
 }

@@ -26,6 +26,7 @@ class Team extends Model
 
     protected $appends = [
         'slug',
+        'current_score',
     ];
 
     /**
@@ -52,10 +53,13 @@ class Team extends Model
         return $this->hasMany(User::class);
     }
 
-    // public function scorecards()
-    // {
-    //     return $this->hasMany(Scorecard::class);
-    // }
+    /**
+     * Get all scorecards
+     */
+    public function scorecards()
+    {
+        return $this->hasMany(Scorecard::class);
+    }
 
     /**
      * Get the team's slug (auto-generated from name).
@@ -68,4 +72,24 @@ class Team extends Model
             set: fn ($value, $attributes) => $value ?? Str::slug($attributes['name'] ?? '')
         );
     }
+
+    /**
+     * Get the team's current score
+     */
+    protected function currentScore(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                // If relation is eager-loaded, sum in-memory to avoid an extra query                
+                // if ($this->relationLoaded('scorecards')) {
+                //     return (int) $this->scorecards->sum(fn ($sc) => (int) ($sc->team_total ?? $sc->total ?? 0));
+                // }
+
+                // // Otherwise ask the DB to sum the column
+                // return (int) $this->scorecards()->sum('team_total'); // <-- change to your column name
+
+                return 0;
+            }
+        );
+    }    
 }
