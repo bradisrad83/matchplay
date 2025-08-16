@@ -13,8 +13,6 @@ class Matchup extends Page
     public function getViewData(): array
     {
         $scorecard = auth()->user()->getCurrentScorecard();
-        // logger('scorecards: ', )
-        logger('scorecard: ', [$scorecard]);
         return [
             'scorecard' => $scorecard,
         ];
