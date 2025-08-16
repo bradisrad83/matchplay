@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Player\Pages\LeagueHome;
 use App\Filament\Player\Pages\PlayerDashboard;
 use App\Filament\Player\Pages\Profile;
+use App\Filament\Player\Pages\Matchup;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -26,8 +27,6 @@ class PlayerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        logger('in the panel');
-        logger("user: ", [auth()->user()]);
         return $panel
             ->id('player')
             ->path('/league') // not sure what I am going to call this yet
@@ -40,6 +39,7 @@ class PlayerPanelProvider extends PanelProvider
             ->pages([
                 LeagueHome::class,
                 Profile::class,
+                Matchup::class,
                 PlayerDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Player/Widgets'), for: 'App\\Filament\\Player\\Widgets')

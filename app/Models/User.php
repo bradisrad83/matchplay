@@ -8,6 +8,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -81,6 +82,25 @@ class User extends Authenticatable
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    /**
+     * Get the scorecards for a user
+     */
+    public function scorecards(): BelongsToMany
+    {
+        return $this->belongsToMany(Scorecard::class);
+    }
+
+    /**
+     * Get the current scorecard in which a user is currently on
+     */
+    public function getCurrentScorecard()
+    {
+        return $this->scorecards()
+            ->where('finalized', false)
+            ->latest('tee_time')
+            ->first();
     }
 
     public function league(): HasOneThrough

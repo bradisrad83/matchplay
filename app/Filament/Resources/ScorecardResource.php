@@ -31,12 +31,13 @@ class ScorecardResource extends Resource
             ->schema([
                 DateTimePicker::make('tee_time')->required(),
                 Checkbox::make('finalized'),
-                Select::make('Winner')
+                Select::make('team_id')
+                    ->label('Winner')
                     ->options([
-                        'PUSH' => 'PUSH',
                         $teams['team_one']?->id => $teams['team_one']?->name,
                         $teams['team_two']?->id => $teams['team_two']?->name,
-                    ]),
+                        'PUSH' => 'PUSH',
+                    ])->nullable(),
                 Select::make('format_id')->label('Match Format')
                     ->relationship('format', 'name')
                     ->required(),
@@ -56,21 +57,21 @@ class ScorecardResource extends Resource
                     ->columnSpanFull()
                     ->itemLabel(fn (array $state) => $state['label'])
                     ->schema([
-                        TextInput::make('ramrod_score')
+                        TextInput::make($teams['team_one']->slug)
                             ->numeric()
                             ->nullable()
-                            ->label('Ramrod'),
+                            ->label($teams['team_one']->name),
 
-                        TextInput::make('roostah_score')
+                        TextInput::make($teams['team_two']->slug)
                             ->numeric()
                             ->nullable()
-                            ->label('Roostah'),
+                            ->label($teams['team_two']->name),
 
                         Select::make('winner')
                             ->options([
-                                'ramrod' => 'Ramrod',
-                                'roostah' => 'Roostah',
-                                'push' => 'Push',
+                                $teams['team_one']?->id => $teams['team_one']?->name,
+                                $teams['team_two']?->id => $teams['team_two']?->name,
+                                'push' => 'PUSH',
                             ])
                             ->label('Winner')
                             ->nullable(),
@@ -82,8 +83,8 @@ class ScorecardResource extends Resource
                     ->default(fn () => collect(range(1, 18))->map(fn ($i) => [
                         'label' => "Hole $i",
                         'hole_number' => $i,
-                        'ramrod_score' => null,
-                        'roostah_score' => null,
+                        $teams['team_one']->name => null,
+                        $teams['team_two']->name => null,
                         'winner' => null,
                     ])->toArray()),
             ]);
@@ -102,7 +103,7 @@ class ScorecardResource extends Resource
                     )
                     ->wrap(),
                 CheckboxColumn::make('finalized'),
-                TextColumn::make('Winner'),
+                TextColumn::make('winner.Team.name')->label('Winner'),
             ])
             ->filters([
                 //

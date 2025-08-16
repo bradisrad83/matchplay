@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Traits\GetsLeagueTeams;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Scorecard extends Model
 {
@@ -16,19 +16,29 @@ class Scorecard extends Model
     /**
      * Creating default hole data when a model is created
      */
-    protected static function booted()
-    {
-        static::creating(function ($scorecard) {
-            ['team_one' => $team_one, 'team_two' => $team_two] = $scorecard->getLeagueTeams();
-            $scorecard->hole_data = collect(range(1, 18))->mapWithKeys(fn ($i) => [
-                "hole_{$i}_data" => [
-                    $team_one->slug => null,
-                    $team_two->slug => null,
-                    'winner' => null,
-                ],
-            ]);
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::creating(function ($scorecard) {
+    //         ['team_one' => $team_one, 'team_two' => $team_two] = $scorecard->getLeagueTeams();
+    //         $scorecard->hole_data = collect(range(1, 18))->mapWithKeys(fn ($i) => [
+    //             "hole_{$i}_data" => [
+    //                 $team_one->slug => null,
+    //                 $team_two->slug => null,
+    //                 'winner' => null,
+    //             ],
+    //         ]);
+    //     });
+    // }
+
+    /**
+     * eager load the users 
+     */
+    protected $with = ['users'];
+
+    /**
+     * The attributes that are not mass assignable.
+     */
+    protected $guarded = [];
 
     /**
      * Get the attributes that should be cast.
@@ -38,6 +48,8 @@ class Scorecard extends Model
     protected function casts(): array
     {
         return [
+            'tee_time' => 'datetime',
+            'finalized' => 'boolean',
             'hole_data' => 'array',
         ];
     }
@@ -47,8 +59,7 @@ class Scorecard extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot(['points', 'winner']);
+        return $this->belongsToMany(User::class);
     }
 
     /**
@@ -57,6 +68,14 @@ class Scorecard extends Model
     public function format(): BelongsTo
     {
         return $this->belongsTo(Format::class);
+    }
+
+    /**
+     * Get the winner of the match (null === push)
+     */
+    public function winner()
+    {
+        return $this->belongsTo(Team::class, 'team_id');
     }
 
     /**

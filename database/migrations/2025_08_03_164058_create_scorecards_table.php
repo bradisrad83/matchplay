@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('finalized')->default(false);
             $table->foreignId('league_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('format_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('team_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -34,7 +35,11 @@ return new class extends Migration
         Schema::table('scorecards', function (Blueprint $table) {
             $table->dropForeign(['league_id']);
             $table->dropColumn('league_id');
-        });        
+        });
+        Schema::table('scorecards', function (Blueprint $table) {
+            $table->dropForeign(['team_id']);
+            $table->dropColumn('team_id');
+        });
         Schema::dropIfExists('scorecards');
     }
 };
