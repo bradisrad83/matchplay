@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class Scorecard extends Model
 {
@@ -31,7 +32,7 @@ class Scorecard extends Model
     // }
 
     /**
-     * eager load the users 
+     * eager load the users
      */
     protected $with = ['users'];
 
@@ -141,5 +142,23 @@ class Scorecard extends Model
             ];
         }
         $this->attributes['hole_data'] = json_encode($formatted);
+    }
+
+    /**
+     * Get the meta data of the scorecard
+     */
+    public function getScorecardMeta(): Collection
+    {
+        $groups = $this->users()->with('team')->get()->groupBy('team_id');
+        return $groups
+            ->values() 
+            ->map(function (Collection $group) {
+                $first = $group->first();
+                return [
+                    'users' => $group->values(),                     
+                    'name' => data_get($first, 'team.name'),
+                    'logo' => data_get($first, 'team.logo'),
+                ];
+            });
     }
 }

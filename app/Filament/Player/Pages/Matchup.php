@@ -13,8 +13,9 @@ class Matchup extends Page
     public function getViewData(): array
     {
         $scorecard = auth()->user()->getCurrentScorecard();
+        $meta = $scorecard->getScorecardMeta();
         return [
-            'scorecard' => $scorecard,
+            'meta' => $meta,
         ];
     }
 }

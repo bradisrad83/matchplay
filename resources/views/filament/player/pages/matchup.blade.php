@@ -17,129 +17,140 @@
             <div class="-mx-6 border-t border-gray-200 dark:border-white/3"></div>
 
             <div class="md:hidden">
-                <div class="py-8 space-y-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-base font-semibold">Player 1</span>
-                            <span class="text-base font-semibold">Player 2</span>
+                @foreach (collect($meta) as $team)
+                    <div class="py-8 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                @foreach (collect($team['users'])->take(2) as $user)
+                                    <span class="text-base font-semibold py-1">
+                                        {{ $user['name'] ?? $user['name'] }}
+                                    </span>
+                                @endforeach
+                            </div>
+
+                            <div style="max-width: 75px" class="size-12 grid place-items-center overflow-hidden">
+                                <img src="{{ asset($team['logo']) }}" alt="{{ $team['name'] }} logo"
+                                    class="w-full h-full object-contain" />
+                            </div>
                         </div>
-                        <div
-                            class="size-12 rounded-full bg-gray-100 dark:bg-white/10 grid place-items-center text-xs text-gray-500">
-                            LOGO
+
+                        <div class="flex items-center justify-between">
+                            <button type="button"
+                                class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
+                                <span class="text-2xl leading-none">−</span>
+                            </button>
+
+                            <div
+                                class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
+                                <span class="text-2xl font-bold">
+                                    {{ $team['score'] ?? 0 }}
+                                </span>
+                            </div>
+
+                            <button type="button"
+                                class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
+                                <span class="text-2xl leading-none">+</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between">
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">−</span>
-                        </button>
-                        <div
-                            class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
-                            <span class="text-2xl font-bold">3</span>
-                        </div>
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">+</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="-mx-6 border-t border-gray-200 dark:border-white/3"></div>
-
-                <div class="py-8 space-y-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-base font-semibold">Player 3</span>
-                            <span class="text-base font-semibold">Player 4</span>
-                        </div>
-                        <div
-                            class="size-12 rounded-full bg-gray-100 dark:bg-white/10 grid place-items-center text-xs text-gray-500">
-                            LOGO
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">−</span>
-                        </button>
-                        <div
-                            class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
-                            <span class="text-2xl font-bold">3</span>
-                        </div>
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">+</span>
-                        </button>
-                    </div>
-                </div>
+                    @if (!$loop->last)
+                        <div class="-mx-6 border-t border-gray-200 dark:border-white/3"></div>
+                    @endif
+                @endforeach
             </div>
 
-            <div class="hidden md:flex flex-row justify-between items-center">
 
-                <div class="py-8 space-y-6 w-full md:w-1/2 md:px-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-base font-semibold">Player 1</span>
-                            <span class="text-base font-semibold">Player 2</span>
+            @php
+                $teams = collect($meta);
+                $left = $teams->get(0);
+                $right = $teams->get(1);
+            @endphp
+
+            <div class="hidden md:flex flex-row justify-between items-stretch">
+
+                @if ($left)
+                    <div style="padding: 1.5rem 1.5rem 1.5rem 0;"
+                    class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
+                        <div class="flex grow items-center justify-between">
+                            <div class="flex flex-col">
+                                @foreach (collect($left['users'])->take(2) as $user)
+                                    <span class="text-base font-semibold py-1">
+                                        {{ $user['name'] }}
+                                    </span>
+                                @endforeach
+                            </div>
+
+                            <div style="max-width: 150px" class="size-12 grid place-items-center overflow-hidden">
+                                <img src="{{ asset($left['logo']) }}" alt="{{ $left['name'] }} logo"
+                                    class="w-full h-full object-contain" />
+                            </div>
                         </div>
-                        <div
-                            class="size-12 rounded-full bg-gray-100 dark:bg-white/10 grid place-items-center text-xs text-gray-500">
-                            LOGO
+
+                        <div class="flex items-center justify-between">
+                            <button type="button"
+                                class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
+                                <span class="text-2xl leading-none">−</span>
+                            </button>
+
+                            <div
+                                class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
+                                <span class="text-2xl font-bold">
+                                    {{ $left['score'] ?? 0 }}
+                                </span>
+                            </div>
+
+                            <button type="button"
+                                class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
+                                <span class="text-2xl leading-none">+</span>
+                            </button>
                         </div>
                     </div>
-
-                    <div class="flex items-center justify-between">
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">−</span>
-                        </button>
-                        <div
-                            class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
-                            <span class="text-2xl font-bold">3</span>
-                        </div>
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">+</span>
-                        </button>
-                    </div>
-                </div>
+                @endif
 
 
-                <div class="border-t border-gray-200 dark:border-white/3 w-full md:hidden"></div>
                 <div class="hidden md:block w-px bg-gray-200 dark:bg-white/3 self-stretch"></div>
 
 
-                <div class="py-8 space-y-6 w-full md:w-1/2 md:px-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-base font-semibold">Player 3</span>
-                            <span class="text-base font-semibold">Player 4</span>
-                        </div>
-                        <div
-                            class="size-12 rounded-full bg-gray-100 dark:bg-white/10 grid place-items-center text-xs text-gray-500">
-                            LOGO
-                        </div>
-                    </div>
+                @if ($right)
+                    <div style="padding: 1.5rem 0 1.5rem 1.5rem;"
+                    class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
+                        <div class="flex grow items-center justify-between">
+                            <div class="flex flex-col">
+                                @foreach (collect($right['users'])->take(2) as $user)
+                                    <span class="text-base font-semibold py-1">
+                                        {{ $user['name'] }}
+                                    </span>
+                                @endforeach
+                            </div>
 
-                    <div class="flex items-center justify-between">
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">−</span>
-                        </button>
-                        <div
-                            class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
-                            <span class="text-2xl font-bold">3</span>
+                            <div style="max-width: 150px" class="size-12 grid place-items-center overflow-hidden">
+                                <img src="{{ asset($right['logo']) }}" alt="{{ $right['name'] }} logo"
+                                    class="w-full h-full object-contain" />
+                            </div>
                         </div>
-                        <button type="button"
-                            class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
-                            <span class="text-2xl leading-none">+</span>
-                        </button>
+
+                        <div class="flex items-center justify-between">
+                            <button type="button"
+                                class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
+                                <span class="text-2xl leading-none">−</span>
+                            </button>
+
+                            <div
+                                class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
+                                <span class="text-2xl font-bold">
+                                    {{ $right['score'] ?? 0 }}
+                                </span>
+                            </div>
+
+                            <button type="button"
+                                class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
+                                <span class="text-2xl leading-none">+</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
-
 
             <div class="-mx-6 border-t border-gray-200 dark:border-white/3"></div>
 
