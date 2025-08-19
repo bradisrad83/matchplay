@@ -19,7 +19,7 @@
             <div class="md:hidden">
                 @foreach (collect($meta) as $team)
                     <div class="py-8 space-y-6">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between pb-2">
                             <div class="flex flex-col">
                                 @foreach (collect($team['users'])->take(2) as $user)
                                     <span class="text-base font-semibold py-1">
@@ -34,7 +34,7 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between pb-2">
                             <button type="button"
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">−</span>
@@ -70,7 +70,8 @@
             <div class="hidden md:flex flex-row justify-between items-stretch">
 
                 @if ($left)
-                    <div style="padding: 1.5rem 1.5rem 1.5rem 0;"
+                    <div 
+                    style="padding: 2rem 1.5rem 2rem 0;"
                     class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
                         <div class="flex grow items-center justify-between">
                             <div class="flex flex-col">
@@ -113,7 +114,7 @@
 
 
                 @if ($right)
-                    <div style="padding: 1.5rem 0 1.5rem 1.5rem;"
+                    <div style="padding: 2rem 0 2rem 1.5rem;"
                     class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
                         <div class="flex grow items-center justify-between">
                             <div class="flex flex-col">
@@ -156,17 +157,17 @@
 
             {{-- Bottom: navigation buttons --}}
             <div class="py-4">
-                <div class="pt-6 pb-2 flex items-center justify-between gap-8">
+                <div class="pt-6 pb-2 flex items-center justify-between gap-6">
                     <button type="button"
                         class="flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex items-center justify-center gap-2">
-                        <span class="text-lg">←</span>
+                        <span class="text-sm">←</span>
                         <span class="text-sm font-semibold tracking-wide">Prev Hole</span>
                     </button>
 
                     <button type="button"
                         class="flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex items-center justify-center gap-2">
                         <span class="text-sm font-semibold tracking-wide">Next Hole</span>
-                        <span class="text-lg">→</span>
+                        <span class="text-sm">→</span>
                     </button>
                 </div>
             </div>
