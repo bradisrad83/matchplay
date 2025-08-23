@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\TeamResource\Pages;
+use App\Models\Team;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class TeamResource extends Resource
+{
+    protected static ?string $model = Team::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')->required(),
+                FileUpload::make('logo')->directory('team-logos'),
+                Select::make('user_id')->label('Captain')->relationship('captain', 'name'),
+                Select::make('league_id')->label('League')->relationship('league', 'name'),
+                Select::make('users')->label('Players')->multiple()->relationship('users', 'name')->disabled(),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('logo'),
+                TextColumn::make('captain.name')->label('Captain'),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListTeams::route('/'),
+            'create' => Pages\CreateTeam::route('/create'),
+            'edit' => Pages\EditTeam::route('/{record}/edit'),
+        ];
+    }
+}
