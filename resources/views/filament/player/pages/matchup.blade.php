@@ -1,4 +1,12 @@
 <x-filament-panels::page>
+    <style>
+        @media (max-width: 320px) {
+            .tiny-box {
+                display: none !important;
+            }
+        }
+    </style>
+
     <div class="mx-auto w-full px-6">
         <x-filament::section class="rounded-2xl border border-gray-200 dark:border-white/3 overflow-hidden">
 
@@ -28,14 +36,16 @@
                                 @endforeach
                             </div>
 
-                            <div style="max-width: 75px" class="size-12 grid place-items-center overflow-hidden">
+                            <div style="max-width: 75px"
+                                class="tiny-box size-12 grid place-items-center overflow-hidden">
                                 <img src="{{ asset($team['logo']) }}" alt="{{ $team['name'] }} logo"
                                     class="w-full h-full object-contain" />
                             </div>
                         </div>
 
                         <div class="flex items-center justify-between pb-2">
-                            <button type="button"
+                            <button type="button" wire:click="decrementScore('{{ $team['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($team['slug']) <= 1)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">−</span>
                             </button>
@@ -43,11 +53,12 @@
                             <div
                                 class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
                                 <span class="text-2xl font-bold">
-                                    {{ $team['score'] ?? 0 }}
+                                    {{ $this->getHoleScore($team['slug']) }}
                                 </span>
                             </div>
 
-                            <button type="button"
+                            <button type="button" wire:click="incrementScore('{{ $team['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($team['slug']) >= 10)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">+</span>
                             </button>
@@ -88,7 +99,8 @@
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <button type="button"
+                            <button type="button" wire:click="decrementScore('{{ $left['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($left['slug']) <= 1)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">−</span>
                             </button>
@@ -96,11 +108,12 @@
                             <div
                                 class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
                                 <span class="text-2xl font-bold">
-                                    {{ $left['score'] ?? 0 }}
+                                    {{ $this->getHoleScore($left['slug']) }}
                                 </span>
                             </div>
 
-                            <button type="button"
+                            <button type="button" wire:click="incrementScore('{{ $left['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($left['slug']) >= 10)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">+</span>
                             </button>
@@ -131,7 +144,8 @@
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <button type="button"
+                            <button type="button" wire:click="decrementScore('{{ $right['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($right['slug']) <= 1)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">−</span>
                             </button>
@@ -139,11 +153,12 @@
                             <div
                                 class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
                                 <span class="text-2xl font-bold">
-                                    {{ $right['score'] ?? 0 }}
+                                    {{ $this->getHoleScore($right['slug']) }}
                                 </span>
                             </div>
 
-                            <button type="button"
+                            <button type="button" wire:click="incrementScore('{{ $right['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($right['slug']) >= 10)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">+</span>
                             </button>
