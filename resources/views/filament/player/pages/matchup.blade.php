@@ -6,7 +6,7 @@
             <div class="py-4">
                 <div class="pt-2 pb-6 flex items-center justify-between">
                     <div class="flex flex-col">
-                        <span class="text-xl font-bold leading-tight">Hole 1</span>
+                        <span class="text-xl font-bold leading-tight">Hole {{ $currentHole }}</span>
                     </div>
                     <div class="inline-flex items-center gap-2 px-3 py-1">
                         <span class="text-xs font-semibold tracking-wide">ALL SQUARE</span>
@@ -70,9 +70,8 @@
             <div class="hidden md:flex flex-row justify-between items-stretch">
 
                 @if ($left)
-                    <div 
-                    style="padding: 2rem 1.5rem 2rem 0;"
-                    class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
+                    <div style="padding: 2rem 1.5rem 2rem 0;"
+                        class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
                         <div class="flex grow items-center justify-between">
                             <div class="flex flex-col">
                                 @foreach (collect($left['users'])->take(2) as $user)
@@ -115,7 +114,7 @@
 
                 @if ($right)
                     <div style="padding: 2rem 0 2rem 1.5rem;"
-                    class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
+                        class="py-8 space-y-6 w-full md:w-1/2 flex flex-col justify-between">
                         <div class="flex grow items-center justify-between">
                             <div class="flex flex-col">
                                 @foreach (collect($right['users'])->take(2) as $user)
@@ -158,13 +157,15 @@
             {{-- Bottom: navigation buttons --}}
             <div class="py-4">
                 <div class="pt-6 pb-2 flex items-center justify-between gap-6">
-                    <button type="button"
+                    <button type="button" wire:click="previousHole" @disabled($currentHole <= 1)
+                        wire:loading.attr="disabled"
                         class="flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex items-center justify-center gap-2">
                         <span class="text-sm">←</span>
                         <span class="text-sm font-semibold tracking-wide">Prev Hole</span>
                     </button>
 
-                    <button type="button"
+                    <button type="button" wire:click="nextHole" @disabled($currentHole >= $maxHole)
+                        wire:loading.attr="disabled"
                         class="flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex items-center justify-center gap-2">
                         <span class="text-sm font-semibold tracking-wide">Next Hole</span>
                         <span class="text-sm">→</span>

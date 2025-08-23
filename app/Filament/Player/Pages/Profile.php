@@ -24,7 +24,6 @@ class Profile extends Page implements HasForms
 
     public User $user;
 
-    // 🔑 Filament stores form state here
     public ?array $data = [];
 
     public function mount(): void
@@ -54,7 +53,7 @@ class Profile extends Page implements HasForms
                     ->avatar(),
 
                 TextInput::make('name')->label('Full Name')->required(),
-                TextInput::make('nickname')->label('Nickname'),
+                TextInput::make('nickname')->label('Nickname')->disabled(),
                 TextInput::make('email')
                     ->label('Email Address')
                     ->email()

@@ -83,8 +83,8 @@ class ScorecardResource extends Resource
                     ->default(fn () => collect(range(1, 18))->map(fn ($i) => [
                         'label' => "Hole $i",
                         'hole_number' => $i,
-                        $teams['team_one']->name => null,
-                        $teams['team_two']->name => null,
+                        $teams['team_one']->slug => null,
+                        $teams['team_two']->slug => null,
                         'winner' => null,
                     ])->toArray()),
             ]);

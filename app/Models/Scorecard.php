@@ -117,8 +117,9 @@ class Scorecard extends Model
             return [
                 'hole_number' => $i,
                 'label' => "Hole $i",
-                $team_one->slug => $hole[$team_one->name] ?? null,
-                $team_two->slug => $hole[$team_two->name] ?? null,
+                // READ WITH SLUGS
+                $team_one->slug => $hole[$team_one->slug] ?? null,
+                $team_two->slug => $hole[$team_two->slug] ?? null,
                 'winner' => $hole['winner'] ?? null,
             ];
         })->toArray();
@@ -132,12 +133,12 @@ class Scorecard extends Model
         ['team_one' => $team_one, 'team_two' => $team_two] = $this->getLeagueTeams();
 
         $formatted = [];
-        foreach ($value as $hole) {
-            $key = "hole_{$hole['hole_number']}_data";
+        foreach ($value as $index => $hole) {
+            $num = $hole['hole_number'] ?? ($index + 1);
 
-            $formatted[$key] = [
-                $team_one->slug => $hole[$team_one->name] ?? null,
-                $team_two->slug => $hole[$team_two->name] ?? null,
+            $formatted["hole_{$num}_data"] = [
+                $team_one->slug => array_key_exists($team_one->slug, $hole) ? $hole[$team_one->slug] : null,
+                $team_two->slug => array_key_exists($team_two->slug, $hole) ? $hole[$team_two->slug] : null,
                 'winner' => $hole['winner'] ?? null,
             ];
         }
@@ -150,15 +151,49 @@ class Scorecard extends Model
     public function getScorecardMeta(): Collection
     {
         $groups = $this->users()->with('team')->get()->groupBy('team_id');
+
         return $groups
-            ->values() 
+            ->values()
             ->map(function (Collection $group) {
                 $first = $group->first();
+
                 return [
-                    'users' => $group->values(),                     
+                    'users' => $group->values(),
                     'name' => data_get($first, 'team.name'),
                     'logo' => data_get($first, 'team.logo'),
                 ];
             });
+    }
+
+    /**
+     * Grab the Teams
+     */
+    public function teams(): Collection
+    {
+        // Pull users with their team in one query
+        $users = $this->users()->with('team:id,name,logo')->get();
+
+        // Grab the Team models, drop nulls, ensure uniqueness & stable order
+        return $users->pluck('team')
+            ->filter()
+            ->unique('id')
+            ->sortBy('slug')   // or 'id' if you prefer numeric stability
+            ->values();
+    }
+
+    /**
+     * Get Team One
+     */
+    public function teamOne(): Team
+    {
+        return $this->teams()->get(0);
+    }
+
+    /**
+     * Get Team Two
+     */
+    public function teamTwo(): Team
+    {
+        return $this->teams()->get(1);
     }
 }
