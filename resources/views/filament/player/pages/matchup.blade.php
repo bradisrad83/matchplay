@@ -1,4 +1,12 @@
 <x-filament-panels::page>
+    <style>
+        @media (max-width: 320px) {
+            .tiny-box {
+                display: none !important;
+            }
+        }
+    </style>
+
     <div class="mx-auto w-full px-6">
         <x-filament::section class="rounded-2xl border border-gray-200 dark:border-white/3 overflow-hidden">
 
@@ -28,7 +36,8 @@
                                 @endforeach
                             </div>
 
-                            <div style="max-width: 75px" class="size-12 grid place-items-center overflow-hidden">
+                            <div style="max-width: 75px"
+                                class="tiny-box size-12 grid place-items-center overflow-hidden">
                                 <img src="{{ asset($team['logo']) }}" alt="{{ $team['name'] }} logo"
                                     class="w-full h-full object-contain" />
                             </div>
@@ -43,7 +52,7 @@
                             <div
                                 class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
                                 <span class="text-2xl font-bold">
-                                    {{ $team['score'] ?? 0 }}
+                                    {{ $this->getHoleScore($team['slug']) }}
                                 </span>
                             </div>
 
@@ -96,7 +105,7 @@
                             <div
                                 class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
                                 <span class="text-2xl font-bold">
-                                    {{ $left['score'] ?? 0 }}
+                                    {{ $this->getHoleScore($left['slug']) }}
                                 </span>
                             </div>
 
@@ -139,7 +148,7 @@
                             <div
                                 class="min-w-[88px] px-6 h-12 rounded grid place-items-center border border-gray-200 dark:border-white/3">
                                 <span class="text-2xl font-bold">
-                                    {{ $right['score'] ?? 0 }}
+                                    {{ $this->getHoleScore($right['slug']) }}
                                 </span>
                             </div>
 

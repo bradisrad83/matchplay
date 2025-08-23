@@ -13,7 +13,7 @@ class Matchup extends Page
 
     protected static string $view = 'filament.player.pages.matchup';
 
-    protected ?Scorecard $scorecard = null;
+    public ?Scorecard $scorecard = null;
 
     public int $currentHole;
 
@@ -24,6 +24,10 @@ class Matchup extends Page
     public ?Team $teamTwo = null;
 
     public ?Collection $meta = null;
+
+    public ?Collection $totalScore = null;
+    
+    public array $teamScore = [];
 
     public function mount()
     {
@@ -122,5 +126,24 @@ class Matchup extends Page
     private function clampCurrentHole(): void
     {
         $this->currentHole = max(1, min($this->currentHole, $this->maxHole));
+    }
+
+    public function getHoleScore(string $slug): ?int
+    {
+        $rows = (array) ($this->scorecard?->hole_data ?? []);
+        $i = max(0, $this->currentHole - 1);
+
+        if (isset($rows[$i]) && (int) ($rows[$i]['hole_number'] ?? 0) === (int) $this->currentHole) {
+            $this->teamScore = [$slug => (int) $rows[$i][$slug] ?? 0];
+            return (int) ($rows[$i][$slug] ?? 0);
+        }
+        foreach ($rows as $row) {
+            if ((int) ($row['hole_number'] ?? 0) === (int) $this->currentHole) {
+                $this->teamScore = [$slug => (int) $rows[$slug] ?? 0];
+                return (int) ($row[$slug] ?? 0);
+            }
+        }
+
+        return 0;
     }
 }

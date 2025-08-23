@@ -161,6 +161,7 @@ class Scorecard extends Model
                     'users' => $group->values(),
                     'name' => data_get($first, 'team.name'),
                     'logo' => data_get($first, 'team.logo'),
+                    'slug' => data_get($first, 'team.slug'),
                 ];
             });
     }
