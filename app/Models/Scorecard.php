@@ -162,6 +162,7 @@ class Scorecard extends Model
                     'name' => data_get($first, 'team.name'),
                     'logo' => data_get($first, 'team.logo'),
                     'slug' => data_get($first, 'team.slug'),
+                    'id' => data_get($first, 'team.id'),
                 ];
             });
     }

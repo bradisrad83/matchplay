@@ -44,7 +44,8 @@
                         </div>
 
                         <div class="flex items-center justify-between pb-2">
-                            <button type="button"
+                            <button type="button" wire:click="decrementScore('{{ $team['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($team['slug']) <= 1)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">−</span>
                             </button>
@@ -56,7 +57,8 @@
                                 </span>
                             </div>
 
-                            <button type="button"
+                            <button type="button" wire:click="incrementScore('{{ $team['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($team['slug']) >= 10)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">+</span>
                             </button>
@@ -97,7 +99,8 @@
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <button type="button"
+                            <button type="button" wire:click="decrementScore('{{ $left['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($left['slug']) <= 1)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">−</span>
                             </button>
@@ -109,7 +112,8 @@
                                 </span>
                             </div>
 
-                            <button type="button"
+                            <button type="button" wire:click="incrementScore('{{ $left['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($left['slug']) >= 10)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">+</span>
                             </button>
@@ -140,7 +144,8 @@
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <button type="button"
+                            <button type="button" wire:click="decrementScore('{{ $right['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($right['slug']) <= 1)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">−</span>
                             </button>
@@ -152,7 +157,8 @@
                                 </span>
                             </div>
 
-                            <button type="button"
+                            <button type="button" wire:click="incrementScore('{{ $right['slug'] }}')"
+                                wire:loading.attr="disabled" @disabled($this->getHoleScore($right['slug']) >= 10)
                                 class="size-12 px-2 rounded-full border border-gray-200 dark:border-white/3 grid place-items-center">
                                 <span class="text-2xl leading-none">+</span>
                             </button>
