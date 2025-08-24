@@ -17,13 +17,13 @@
                         <span class="text-md md:text-lg font-bold leading-tight text-center">Hole
                             {{ $currentHole }}</span>
                     </div>
-                    <div class="flex-col items-center justify-center gap-2 px-3">
+                    <div class="flex flex-wrap items-center justify-center gap-1 px-3">
                         {{-- <span class="text-sm md:text-md font-semibold tracking-wide">All Square</span> --}}
                         @if ($currentScore['logo'])
-                            <img style="max-width: 50px;" class="" src="{{ asset($currentScore['logo']) }}"
+                            <img style="max-width: 75px;" class="" src="{{ asset($currentScore['logo']) }}"
                                 alt="current winning team logo" class="w-full h-full object-contain" />
                         @endif
-                        <div class="text-sm md:text-md font-semibold tracking-wide text-center py-1">
+                        <div class="text-sm md:text-md font-semibold tracking-wide text-center">
                             {{ $currentScore['score'] }}</div>
                     </div>
                 </div>
