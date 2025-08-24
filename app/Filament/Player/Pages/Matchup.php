@@ -31,6 +31,8 @@ class Matchup extends Page
 
     public array $holeData = [];
 
+    public array $currentScore = [];
+
     public function mount()
     {
         $this->scorecard = auth()->user()->getCurrentScorecard();
@@ -43,8 +45,7 @@ class Matchup extends Page
             : (array) $this->scorecard->hole_data;
 
         $this->currentHole = $this->getStartingHole($this->holeData);
-        logger('scorecard: ', [$this->scorecard]);
-        logger('hole_data: ', $this->scorecard->hole_data);
+        $this->currentScore = $this->scorecard->getCurrentScore();
     }
 
     public function getViewData(): array
@@ -254,5 +255,6 @@ class Matchup extends Page
     {
         $this->scorecard->hole_data = $this->holeData;
         $this->scorecard->save();
+        $this->currentScore = $this->scorecard->getCurrentScore();
     }
 }

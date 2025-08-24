@@ -172,14 +172,12 @@ class Scorecard extends Model
      */
     public function teams(): Collection
     {
-        // Pull users with their team in one query
         $users = $this->users()->with('team:id,name,logo')->get();
 
-        // Grab the Team models, drop nulls, ensure uniqueness & stable order
         return $users->pluck('team')
             ->filter()
             ->unique('id')
-            ->sortBy('slug')   // or 'id' if you prefer numeric stability
+            ->sortBy('id')
             ->values();
     }
 
@@ -197,5 +195,112 @@ class Scorecard extends Model
     public function teamTwo(): Team
     {
         return $this->teams()->get(1);
+    }
+
+    /**
+     * Return structured match-play status.
+     *
+     * ['logo' => string|null, 'score' => string]
+     * Examples:
+     * - ['logo' => null, 'score' => 'All Square']
+     * - ['logo' => 'team-logos/abc.png', 'score' => 'TEAM RAMROD dormie']
+     * - ['logo' => 'team-logos/abc.png', 'score' => 'TEAM RAMROD 2 up']
+     * - ['logo' => 'team-logos/abc.png', 'score' => 'TEAM RAMROD 3 & 2']
+     */
+    public function getCurrentScore(): array
+    {
+        // Map teamId => name/logo from users->team
+        $groups = $this->users()->with('team')->get()->groupBy('team_id');
+        $teamNames = [];
+        $teamLogos = [];
+        foreach ($groups as $teamId => $users) {
+            $first = $users->first();
+            $tid = (int) $teamId;
+            $teamNames[$tid] = data_get($first, 'team.name', "Team {$tid}");
+            $teamLogos[$tid] = data_get($first, 'team.logo');
+        }
+
+        // Ensure two team IDs exist; infer from hole winners if needed
+        $teamIds = array_values(array_map('intval', array_keys($teamNames)));
+        if (count($teamIds) < 2) {
+            $seen = [];
+            foreach ((array) ($this->hole_data ?? []) as $r) {
+                $w = $r['winner'] ?? null;
+                if (is_numeric($w)) {
+                    $wid = (int) $w;
+                    $seen[$wid] = true;
+                    $teamNames[$wid] = $teamNames[$wid] ?? "Team {$wid}";
+                    if (! array_key_exists($wid, $teamLogos)) {
+                        $teamLogos[$wid] = null;
+                    }
+                    if (count($seen) >= 2) {
+                        break;
+                    }
+                }
+            }
+            $teamIds = array_values(array_map('intval', array_keys($seen)));
+            if (count($teamIds) < 2) {
+                return ['logo' => null, 'score' => 'All Square'];
+            }
+        }
+
+        [$t1Id, $t2Id] = [$teamIds[0], $teamIds[1]];
+        $wins = [$t1Id => 0, $t2Id => 0];
+        $pushes = 0;
+
+        foreach ((array) ($this->hole_data ?? []) as $row) {
+            $w = $row['winner'] ?? null;
+            if ($w === 'push') {
+                $pushes++;
+
+                continue;
+            }
+            if (is_numeric($w) && isset($wins[(int) $w])) {
+                $wins[(int) $w]++;
+            }
+        }
+
+        $t1 = (int) $wins[$t1Id];
+        $t2 = (int) $wins[$t2Id];
+        $lead = $t1 - $t2;
+        $absLead = abs($lead);
+
+        $total = (int) (
+            data_get($this, 'total_holes')
+            ?? data_get($this, 'max_hole')
+            ?? data_get($this, 'settings.total_holes')
+            ?? 18
+        );
+
+        $decided = $t1 + $t2 + $pushes;
+        $holesRemaining = max(0, $total - $decided);
+
+        if ($absLead === 0) {
+            return ['logo' => null, 'score' => 'All Square'];
+        }
+
+        $leaderId = $lead > 0 ? $t1Id : $t2Id;
+        $leaderName = $teamNames[$leaderId] ?? "Team {$leaderId}";
+        $leaderLogo = $teamLogos[$leaderId] ?? null;
+
+        // 18th-hole finish should be "X up", not "X & 0"
+        if ($holesRemaining === 0) {
+            $suffix = ($absLead === 1) ? '1 up' : "{$absLead} up";
+
+            return ['logo' => $leaderLogo, 'score' => "{$leaderName} {$suffix}"];
+        }
+
+        // Dormie: lead equals holes remaining (and match not over yet)
+        if ($absLead === $holesRemaining) {
+            return ['logo' => $leaderLogo, 'score' => "Dormie"];
+        }
+
+        // Match already over early
+        if ($absLead > $holesRemaining) {
+            return ['logo' => $leaderLogo, 'score' => "{$absLead} & {$holesRemaining}"];
+        }
+
+        // Ongoing match
+        return ['logo' => $leaderLogo, 'score' => "{$absLead} Up"];
     }
 }
