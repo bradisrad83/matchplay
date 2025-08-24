@@ -98,7 +98,7 @@ class User extends Authenticatable
     public function getCurrentScorecard()
     {
         return $this->scorecards()
-            ->where('finalized', false)
+            // ->where('finalized', false)
             ->latest('tee_time')
             ->first();
     }

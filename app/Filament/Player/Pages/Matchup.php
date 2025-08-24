@@ -33,6 +33,8 @@ class Matchup extends Page
 
     public array $currentScore = [];
 
+    public bool $showFinalize = false;
+
     public function mount()
     {
         $this->scorecard = auth()->user()->getCurrentScorecard();
@@ -46,6 +48,7 @@ class Matchup extends Page
 
         $this->currentHole = $this->getStartingHole($this->holeData);
         $this->currentScore = $this->scorecard->getCurrentScore();
+        $this->showFinalize = $this->scorecard->finalized;
     }
 
     public function getViewData(): array
@@ -124,11 +127,19 @@ class Matchup extends Page
 
     public function nextHole(): void
     {
+        // Always try to decide/save the current hole before moving
+        $this->checkHoleWinner();
+        $this->saveScorecard();
+
         if ($this->currentHole < $this->maxHole) {
-            $this->checkHoleWinner();
-            $this->saveScorecard();
+            // Normal navigation up to the final hole
             $this->currentHole++;
+            $this->showFinalize = false; // hide finalize until we hit 18
+        } else {
+            // We're on the last hole: don't advance, just show finalize
+            $this->showFinalize = true;
         }
+
         $this->clampCurrentHole();
     }
 
@@ -256,5 +267,17 @@ class Matchup extends Page
         $this->scorecard->hole_data = $this->holeData;
         $this->scorecard->save();
         $this->currentScore = $this->scorecard->getCurrentScore();
+    }
+
+    public function finalizeMatch(): void
+    {
+        // Safety: ensure the last hole has a winner
+        $this->checkHoleWinner();
+        $this->saveScorecard();
+
+        $status = $this->scorecard->getCurrentScore(); 
+        $this->scorecard->team_id = $status['team_id'] ?? null;
+        $this->scorecard->finalized = true; 
+        $this->scorecard->save();
     }
 }

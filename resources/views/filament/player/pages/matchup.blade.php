@@ -179,19 +179,26 @@
             {{-- Bottom: navigation buttons --}}
             <div class="py-4">
                 <div class="pt-6 pb-2 flex items-center justify-between gap-6">
-                    <button type="button" wire:click="previousHole" @disabled($currentHole <= 1)
+                    <button type="button" wire:click="previousHole" @disabled($currentHole <= 1 || $scorecard->finalized)
                         wire:loading.attr="disabled"
                         class="flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex items-center justify-center gap-2">
                         <span class="text-sm">←</span>
                         <span class="text-sm font-semibold tracking-wide">Prev Hole</span>
                     </button>
 
-                    <button type="button" wire:click="nextHole" @disabled($currentHole >= $maxHole)
-                        wire:loading.attr="disabled"
-                        class="flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex items-center justify-center gap-2">
-                        <span class="text-sm font-semibold tracking-wide">Next Hole</span>
-                        <span class="text-sm">→</span>
-                    </button>
+                    @if(!$showFinalize)
+                        <button type="button" wire:click="nextHole" @disabled($currentHole > $maxHole || $scorecard->finalized)
+                            wire:loading.attr="disabled"
+                            class="flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex items-center justify-center gap-2">
+                            <span class="text-sm font-semibold tracking-wide">Next Hole</span>
+                            <span class="text-sm">→</span>
+                        </button>
+                    @else
+                        <button wire:click="finalizeMatch" @disabled($scorecard->finalized)
+                            class="bg-green-600 flex-1 h-14 rounded-lg p-2 border border-gray-300 dark:border-white/3 inline-flex flex-wrap items-center justify-center gap-1">
+                            <span class="text-sm font-semibold tracking-wide mr-1">Finalize</span> <span class="text-sm font-semibold tracking-wide tiny-box">Match</span>
+                        </button>
+                    @endif
                 </div>
             </div>
         </x-filament::section>

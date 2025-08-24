@@ -197,16 +197,6 @@ class Scorecard extends Model
         return $this->teams()->get(1);
     }
 
-    /**
-     * Return structured match-play status.
-     *
-     * ['logo' => string|null, 'score' => string]
-     * Examples:
-     * - ['logo' => null, 'score' => 'All Square']
-     * - ['logo' => 'team-logos/abc.png', 'score' => 'TEAM RAMROD dormie']
-     * - ['logo' => 'team-logos/abc.png', 'score' => 'TEAM RAMROD 2 up']
-     * - ['logo' => 'team-logos/abc.png', 'score' => 'TEAM RAMROD 3 & 2']
-     */
     public function getCurrentScore(): array
     {
         // Map teamId => name/logo from users->team
@@ -240,7 +230,16 @@ class Scorecard extends Model
             }
             $teamIds = array_values(array_map('intval', array_keys($seen)));
             if (count($teamIds) < 2) {
-                return ['logo' => null, 'score' => 'All Square'];
+                $total = (int) (data_get($this, 'total_holes') ?? data_get($this, 'max_hole') ?? data_get($this, 'settings.total_holes') ?? 18);
+
+                return [
+                    'logo' => null,
+                    'score' => 'All Square',
+                    'holes_remaining' => $total,
+                    'is_over' => false,
+                    'name' => null,
+                    'team_id' => null,   // NEW
+                ];
             }
         }
 
@@ -274,9 +273,19 @@ class Scorecard extends Model
 
         $decided = $t1 + $t2 + $pushes;
         $holesRemaining = max(0, $total - $decided);
+        $isOver = ($holesRemaining === 0) || ($absLead > $holesRemaining);
 
         if ($absLead === 0) {
-            return ['logo' => null, 'score' => 'All Square'];
+            $text = $isOver ? 'Push' : 'All Square';
+
+            return [
+                'logo' => null,
+                'score' => $text,
+                'holes_remaining' => $holesRemaining,
+                'is_over' => $isOver,
+                'name' => null,
+                'team_id' => null,
+            ];
         }
 
         $leaderId = $lead > 0 ? $t1Id : $t2Id;
@@ -287,20 +296,48 @@ class Scorecard extends Model
         if ($holesRemaining === 0) {
             $suffix = ($absLead === 1) ? '1 up' : "{$absLead} up";
 
-            return ['logo' => $leaderLogo, 'score' => "{$leaderName} {$suffix}"];
+            return [
+                'logo' => $leaderLogo,
+                'score' => "{$leaderName} {$suffix}",
+                'holes_remaining' => $holesRemaining,
+                'is_over' => true,
+                'name' => $leaderName,
+                'team_id' => $leaderId,
+            ];
         }
 
         // Dormie: lead equals holes remaining (and match not over yet)
         if ($absLead === $holesRemaining) {
-            return ['logo' => $leaderLogo, 'score' => "Dormie"];
+            return [
+                'logo' => $leaderLogo,
+                'score' => 'Dormie',
+                'holes_remaining' => $holesRemaining,
+                'is_over' => false,
+                'name' => $leaderName,
+                'team_id' => $leaderId,
+            ];
         }
 
         // Match already over early
         if ($absLead > $holesRemaining) {
-            return ['logo' => $leaderLogo, 'score' => "{$absLead} & {$holesRemaining}"];
+            return [
+                'logo' => $leaderLogo,
+                'score' => "{$absLead} & {$holesRemaining}",
+                'holes_remaining' => $holesRemaining,
+                'is_over' => true,
+                'name' => $leaderName,
+                'team_id' => $leaderId, 
+            ];
         }
 
         // Ongoing match
-        return ['logo' => $leaderLogo, 'score' => "{$absLead} Up"];
+        return [
+            'logo' => $leaderLogo,
+            'score' => "{$absLead} Up",
+            'holes_remaining' => $holesRemaining,
+            'is_over' => false,
+            'name' => $leaderName,
+            'team_id' => $leaderId, 
+        ];
     }
 }
